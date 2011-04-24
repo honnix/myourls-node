@@ -36,9 +36,29 @@ app.set('view options', {
 // Routes
 
 app.get(/^\/(index)?$/, function (req, res) {
-    console.log('end');
     res.render('index', {
-        title: 'Express'
+        from: 0,
+        to: 10,
+        total: 100,
+        links: 100,
+        clicks: 1000,
+        totalPages: 10,
+        urls: null
+        // urls: [{
+        //     linkId: '1',
+        //     originUrl: 'aaa',
+        //     shortenedUrl: 'a',
+        //     date: '2000',
+        //     ip: 'localhost',
+        //     clickCount: 1
+        // }, {
+        //     linkId: '2',
+        //     originUrl: 'bbb',
+        //     shortenedUrl: 'b',
+        //     date: '2000',
+        //     ip: 'localhost',
+        //     clickCount: 1
+        // }]
     });
 });
 

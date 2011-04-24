@@ -1,7 +1,7 @@
 $(document).ready(function() {
     reset_url();
-    if ($("#tblUrl tr.nourl_found").length != 1) {
-        $("#tblUrl").tablesorter({
+    if ($("#tbl-url tr.nourl_found").length != 1) {
+        $("#tbl-url").tablesorter({
             headers: { 6: {sorter: false} }, // no sorter on column #6
             widgets: ["zebra"] // prettify
         });
