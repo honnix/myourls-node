@@ -5,6 +5,7 @@
 
 var express = require('express');
 var s = require('./shortened_url');
+var _ = require('underscore');
 
 var app = module.exports = express.createServer();
 
@@ -36,29 +37,16 @@ app.set('view options', {
 // Routes
 
 app.get(/^\/(index)?$/, function (req, res) {
-    res.render('index', {
-        from: 0,
-        to: 10,
-        total: 100,
-        links: 100,
-        clicks: 1000,
-        totalPages: 10,
-        urls: null
-        // urls: [{
-        //     linkId: '1',
-        //     originUrl: 'aaa',
-        //     shortenedUrl: 'a',
-        //     date: '2000',
-        //     ip: 'localhost',
-        //     clickCount: 1
-        // }, {
-        //     linkId: '2',
-        //     originUrl: 'bbb',
-        //     shortenedUrl: 'b',
-        //     date: '2000',
-        //     ip: 'localhost',
-        //     clickCount: 1
-        // }]
+    s.findAll({}, {}, function (docs) {
+        res.render('index', {
+            from: 0,
+            to: 10,
+            total: 100,
+            links: 100,
+            clicks: 1000,
+            totalPages: 10,
+            urls: docs
+        });
     });
 });
 
@@ -75,6 +63,11 @@ app.get('/:id', function (req, res, next) {
 
         res.redirect(to);
     });
+});
+
+app.get('/api/add', function (req, res) {
+    var originUrl = req.param.url;
+    res.send({status: 'success', html: 'ok'});
 });
 
 // Only listen on $ node app.js

@@ -21,7 +21,6 @@ html
         | hortener
         br
         img(src='/images/yourls-logo.png', alt='MYOURLS', title='MYOURLS', style='border: 0px;')
-
     p
       | Display
       strong
@@ -42,11 +41,11 @@ html
       | \ clicks, and counting!
     #new-url
       div
-        form#new-url-form
+        form#new-url-form(action='javascript:', method='get')
           strong Enter the URL
           | :
-          input.text(type='text', value='http://', size='90')
-          input.button(type='submit', value='Shorten The URL')
+          input#add-url.text(type='text', value='http://', size='90')
+          input#add-button.button(type='submit', value='Shorten The URL')
 
     table#tbl-url.tblSorter(cellpadding='0', cellspacing='1')
       thead: tr
@@ -59,7 +58,7 @@ html
         th Actions
       tfoot: tr
         th(colspan='4', style='text-align: left;')
-          form(method='get')
+          form(action='/', method='get')
             div
               div(style='float:right;')
                 input.button.primary(type='submit', value='Filter')
@@ -71,7 +70,7 @@ html
               select(size='1')
                 option(value='originUrl', selected='selected') URL
                 option(value='ip') IP
-              | \ &ndash; Order by
+              | \ - Order by
               select(size='1')
                 option(value='linkId', selected='selected') ID
                 option(value='originUrl') URL
@@ -110,10 +109,14 @@ html
             tr
               td=url.linkId
               td=url.originUrl
-              td=url.shortenedUrl
+              td=url.shortUrl
               td=url.date
               td=url.ip
               td=url.clickCount
+              td.actions
+                input.button(type='button', value='Edit')
+                | 
+                input.button(type='button', value='Del')
         - else
           tr.nourl-found
             td(colspan='7') No URL Found

@@ -22,4 +22,20 @@ ShortenedUrl.prototype.find = function (conditions, callback) {
     });
 };
 
+ShortenedUrl.prototype.findAll = function (conditions, options, callback) {
+    this.db.open(function (err, db) {
+        db.collection('shortenedurls', function (err, collection) {
+            collection.find(conditions, options, function (err, cursor) {
+                cursor.toArray(function (err, docs) {
+                    try {
+                        callback(docs);
+                    } finally {
+                        db.close();
+                    }
+                });
+            });
+        });
+    });
+};
+
 module.exports = new ShortenedUrl();
