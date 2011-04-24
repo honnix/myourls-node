@@ -29,6 +29,10 @@ app.configure('production', function () {
     app.use(express.errorHandler()); 
 });
 
+app.set('view options', {
+    layout: false
+});
+
 // Routes
 
 app.get(/^\/(index)?$/, function (req, res) {
