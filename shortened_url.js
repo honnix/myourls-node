@@ -10,14 +10,12 @@ var ShortenedUrl = function (host) {
 ShortenedUrl.prototype.find = function (selector, callback) {
     this.db.open(function (err, db) {
         db.collection('shortenedurls', function (err, collection) {
-            collection.find(selector, function (err, cursor) {
-                cursor.nextObject(function (err, doc) {
-                    try {
-                        callback(doc);
-                    } finally {
-                        db.close();
-                    }
-                });
+            collection.findAndModify(selector, [], {$inc: {clickCount: 1}}, {new: true}, function (err, doc) {
+                try {
+                    callback(doc);
+                } finally {
+                    db.close();
+                }
             });
         });
     });
@@ -49,9 +47,9 @@ ShortenedUrl.prototype.insert = function (url, callback) {
                     linkId: linkId,
                     originUrl: url.originUrl,
                     shortUrl: that.host + linkId,
-                    date: url.date,
+                    date: new Date,
                     ip: url.ip,
-                    clickCount: url.clickCount
+                    clickCount: 0
                 };
 
                 db.collection('shortenedurls', function (err, collection) {
@@ -63,6 +61,34 @@ ShortenedUrl.prototype.insert = function (url, callback) {
                         }
                     });
                 });
+            });
+        });
+    });
+};
+
+ShortenedUrl.prototype.update = function (url, callback) {
+    this.db.open(function (err, db) {
+        db.collection('shortenedurls', function (err, collection) {
+            collection.findAndModify({linkId: url.linkId}, [], {$set: {originUrl: url.originUrl, date: new Date()}}, {new: true}, function (err, doc) {
+                try {
+                    callback(doc);
+                } finally {
+                    db.close();
+                }
+            });
+        });
+    });
+};
+
+ShortenedUrl.prototype.remove = function (linkId, callback) {
+    this.db.open(function (err, db) {
+        db.collection('shortenedurls', function (err, collection) {
+            collection.remove({linkId: linkId}, {safe: true}, function (err, doc) {
+                try {
+                    callback(linkId);
+                } finally {
+                    db.close();
+                }
             });
         });
     });

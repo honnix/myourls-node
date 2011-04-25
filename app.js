@@ -73,9 +73,7 @@ app.get('/:id', function (req, res, next) {
 app.get('/api/add', function (req, res) {
     var url = {
         originUrl: req.query.url,
-        date: new Date(),
-        ip: req.header('Host'),
-        clickCount: 0
+        ip: req.header('Host')
     };
     s.insert(url, function (url) {
         res.send({
@@ -88,6 +86,39 @@ app.get('/api/add', function (req, res) {
                 date: url.date.toString(),
                 ip: url.ip,
                 clickCount: url.clickCount
+            }
+        });
+    });
+});
+
+app.get('/api/update', function (req, res) {
+    var url = {
+        linkId: req.query.linkId,
+        originUrl: req.query.newUrl
+    };
+    s.update(url, function (url) {
+        res.send({
+            status: 'success',
+            message: 'URL updated successfully',
+            url: {
+                linkId: url.linkId,
+                originUrl: url.originUrl,
+                shortUrl: url.shortUrl,
+                date: url.date.toString(),
+                ip: url.ip,
+                clickCount: url.clickCount
+            }
+        });
+    });
+});
+
+app.get('/api/remove', function (req, res) {
+    s.remove(req.query.linkId, function (linkId) {
+        res.send({
+            status: 'success',
+            message: 'URL deleted successfully',
+            url: {
+                linkId: linkId
             }
         });
     });

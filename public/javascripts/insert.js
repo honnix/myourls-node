@@ -8,100 +8,127 @@ $(document).ready(function () {
     }
 
     $('#add-button').click(add);
+
+    $('input[id^="edit-button-"]').click(function () {
+        edit($(this).attr('id').substring('edit-button-'.length));
+    });
+    $('input[id^="delete-button-"]').click(function () {
+        remove($(this).attr('id').substring('delete-button-'.length));
+    });
 });
 
-// Create new link and add to table
 function add() {
-    var newUrl = $('#add-url').val();
-    if (!newUrl || newUrl == 'http://' || newUrl == 'https://') {
+    var url = $('#add-url').val();
+    if (!url || url === 'http://' || url === 'https://') {
         alert('no URL ?');
-        return;
-    }
-    add_loading('#add-button');
-    $.getJSON(
-        '/api/add',
-        {url: newUrl},
-        function (data) {
-            if(data.status == 'success') {
-                var row = $('<tr />').attr('id', data.url.linkId).append($('<td />').text(data.url.linkId)).
-                    append($('<td />').text(data.url.originUrl)).append($('<td />').text(data.url.shortUrl)).
-                    append($('<td />').text(data.url.date)).append($('<td />').text(data.url.ip)).
-                    append($('<td />').text(data.url.clickCount)).append($('<td />').addClass('actions').
-                                                                         append($('<input />').addClass('button').
-                                                                                attr('type', 'button').attr('value', 'Edit')).
-                                                                         append('\n').
-                                                                         append($('<input />').addClass('button').
-                                                                                attr('type', 'button').attr('value', 'Del')));
-                $('#tbl-url tbody').prepend(row).trigger('update');
-                $('.nourl_found').remove();
-                zebra_table();
-                reset_url();
-                increment();
+    } else {
+        add_loading('#add-button');
+        $.getJSON(
+            '/api/add',
+            {url: url},
+            function (data) {
+                if (data.status === 'success') {
+                    var row = $('<tr />').attr('id', 'id-' + data.url.linkId).append($('<td />').text(data.url.linkId)).
+                        append($('<td />').attr('id', 'url-' + data.url.linkId).append(
+                            $('<a />').attr('title', data.url.originUrl).attr('href', data.url.originUrl).text(data.url.originUrl))).
+                        append($('<td />').attr('id', 'shorturl-' + data.url.linkId).append(
+                            $('<a />').attr('title', data.url.shortUrl).attr('href', data.url.shortUrl).text(data.url.shortUrl))).
+                        append($('<td />').attr('id', 'timestamp-' + data.url.linkId).text(data.url.date)).append($('<td />').text(data.url.ip)).
+                        append($('<td />').text(data.url.clickCount)).
+                        append($('<td />').addClass('actions').
+                               append($('<input />').attr('id', 'edit-button-' + data.url.linkId).
+                                      addClass('button').
+                                      attr('type', 'button').val('Edit').click(function () {
+                                          edit(data.url.linkId);
+                                      })).
+                               append('\n').
+                               append($('<input />').attr('id', 'delete-button-' + data.url.linkId).
+                                      addClass('button').
+                                      attr('type', 'button').val('Del').click(function () {
+                                          remove(data.url.linkId);
+                                      })));
+                    row.hide().prependTo($('#tbl-url tbody')).fadeIn(200).trigger('update');
+                    $('.nourl_found').remove();
+                    zebra_table();
+                    reset_url();
+                    increment();
+                }
+                feedback(data.message, data.status);
+                end_loading('#add-button');
+                end_disable('#add-button');
             }
-            feedback(data.message, data.status);
-            end_loading('#add-button');
-            end_disable('#add-button');
-        }
-    );
+        );
+    }
 }
 
-// Display the edition interface
 function edit(id) {
-    add_loading('#edit-button-' + id);
-    add_loading('#delete-button-' + id);
-    $.getJSON(
-        'index_ajax.php',
-        { mode: 'edit_display', id: id },
-        function(data){
-            $('#id-' + id).after( data.html );
-            $('#edit-url-'+ id).focus();
-            end_loading('#edit-button-' + id);
-            end_loading('#delete-button-' + id);
-        }
-    );
+    var editRow = $('<tr />').attr('id', 'edit-' + id).addClass('edit-row').
+        append($('<td />').attr('colspan', '6').append('Edit: \n').
+               append('<strong>original URL</strong>').append(':\n').
+               append($('<input />').attr('id', 'edit-url-' + id).attr('type', 'text').
+                      val($('#url-' + id + ' a').attr('href')).
+                      attr('size', '100').addClass('text'))).
+        append($('<td />').attr('colspan', '1').
+               append($('<input />').attr('type', 'button').
+                      attr('id', 'edit-submit-' + id).
+                      val('Save').
+                      attr('title', 'Save new value').
+                      addClass('button').click(function () {
+                          save_edit(id);
+                      })).
+               append('\n').
+               append($('<input />').attr('type', 'button').
+                      attr('id', 'edit-close-' + id).
+                      val('X').
+                      attr('title', 'Cancel editing').
+                      addClass('button').click(function () {
+                          cancel_edit(id);
+                      })));
+    $('#id-' + id).after(editRow);
+    $('#edit-url-'+ id).focus();
+    add_disable('#edit-button-' + id);
+    add_disable('#delete-button-' + id);
 }
 
-// Delete a link
 function remove(id) {
-    if (!confirm('Really delete?')) {
-        return;
-    }
-    $.getJSON(
-        'index_ajax.php',
-        { mode: 'delete', id: id },
-        function(data){
-            if (data.success == 1) {
-                $('#id-' + id).fadeOut(function(){$(this).remove();zebra_table();});
-            } else {
-                alert('something wrong happened while deleting :/');
+    if (confirm('Really delete?')) {
+        $.getJSON(
+            '/api/remove',
+            {linkId: id},
+            function (data) {
+                if (data.status === 'success') {
+                    $('#id-' + id).fadeOut(function () {
+                        $(this).remove();
+                        zebra_table();
+                    });
+                } else {
+                    alert('something wrong happened while deleting :/');
+                }
             }
-        }
-    );
+        );
+    }
 }
 
-// Cancel edition of a link
-function hide_edit(id) {
-    $('#edit-' + id).fadeOut(200, function(){
+function cancel_edit(id) {
+    $('#edit-' + id).fadeOut(200, function () {
         end_disable('#edit-button-' + id);
         end_disable('#delete-button-' + id);
+        $(this).remove();
     });
 }
 
-// Save edition of a link
-function edit_save(id) {
+function save_edit(id) {
     add_loading('#edit-close-' + id);
-    var newurl = $('#edit-url-' + id).val();
-    var newid = $('#edit-id-' + id).val();
+    var newUrl = $('#edit-url-' + id).val();
     $.getJSON(
-        'index_ajax.php',
-        {mode:'edit_save', url: newurl, id: id, newid: newid }, function(data){
-            if(data.status == 'success') {
-                $('#url-' + id).html('<a href="' + data.url.url + '" title="' + data.url.url + '">' + data.url.url + '</a>');
-                $('#keyword-' + id).html(data.url.keyword);
-                $('#shorturl-' + id).html('<a href="' + data.url.shorturl + '" title="' + data.url.shorturl + '">' + data.url.shorturl + '</a>');
+        '/api/update',
+        {newUrl: newUrl, linkId: id}, function (data) {
+            if(data.status === 'success') {
+                $('#url-' + id).html('<a href="' + data.url.originUrl + '" title="' + data.url.originUrl + '">' + data.url.originUrl + '</a>');
                 $('#timestamp-' + id).html(data.url.date);
                 $('#edit-' + id).fadeOut(200, function(){
-                    $('#tblUrl tbody').trigger('update');
+                    $('#tbl-url tbody').trigger('update');
+                    $(this).remove();
                 });
             }
             feedback(data.message, data.status);
@@ -113,41 +140,28 @@ function edit_save(id) {
     );
 }
 
-// Unused for now since HTTP Auth sucks donkeys.
-function logout() {
-    $.ajax({
-        type: 'POST',
-        url: 'index_ajax.php',
-        data: {mode:'logout'},
-        success: function() {
-            window.parent.location.href = window.parent.location.href;
-        }
-    });
-}
-
-// Begin the spinning animation & disable a button
 function add_loading(el) {
     $(el).attr('disabled', 'disabled').addClass('disabled').addClass('loading');
 }
 
-// End spinning animation
+function add_disable(el) {
+    $(el).attr('disabled', 'disabled').addClass('disabled');
+}
+
 function end_loading(el) {
     $(el).removeClass('loading');
 }
 
-// Un-disable an element
 function end_disable(el) {
     $(el).removeAttr('disabled').removeClass('disabled');
 }
 
-// Prettify table with odd & even rows
 function zebra_table() {
     $('#tbl-url tbody tr:even').removeClass('odd').addClass('even');
     $('#tbl-url tbody tr:odd').removeClass('even').addClass('odd');
     $('#tbl-url tbody').trigger('update');
 }
 
-// Update feedback message
 function feedback(msg, type) {
     var span = (type == 'fail') ? '<span class="fail">' : '<span>' ;
     var delay = (type == 'fail') ? 2500 : 1000 ;
@@ -158,13 +172,11 @@ function feedback(msg, type) {
     });
 }
 
-// Ready to add another URL
 function reset_url() {
     $('#add-url').val('http://').focus();
     $('#add-keyword').val('');
 }
 
-// Increment URL counters
 function increment() {
     $('.increment').each(function(){
         $(this).html( parseInt($(this).html()) + 1);

@@ -107,17 +107,19 @@ html
       tbody
         - if (urls)
           - each url in urls
-            tr(id=url.linkId)
+            tr(id='id-' + url.linkId)
               td=url.linkId
-              td=url.originUrl
-              td=url.shortUrl
-              td=url.date
+              td(id='url-' + url.linkId)
+                a(title=url.originUrl, href=url.originUrl)=url.originUrl
+              td(id='shorturl-' + url.linkId)
+                a(title=url.shortUrl, href=url.shortUrl)=url.shortUrl
+              td(id='timestamp-' + url.linkId)=url.date
               td=url.ip
               td=url.clickCount
               td.actions
-                input.button(type='button', value='Edit')
+                input.button(id='edit-button-' + url.linkId, type='button', value='Edit')
                 | 
-                input.button(type='button', value='Del')
+                input.button(id='delete-button-' + url.linkId, type='button', value='Del')
         - else
           tr.nourl-found
             td(colspan='7') No URL Found
