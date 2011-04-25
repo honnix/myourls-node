@@ -28,26 +28,47 @@ function add() {
             {url: url},
             function (data) {
                 if (data.status === 'success') {
-                    var row = $('<tr />').attr('id', 'id-' + data.url.linkId).append($('<td />').text(data.url.linkId)).
-                        append($('<td />').attr('id', 'url-' + data.url.linkId).append(
-                            $('<a />').attr('title', data.url.originUrl).attr('href', data.url.originUrl).text(data.url.originUrl))).
-                        append($('<td />').append(
-                            $('<a />').attr('title', data.url.shortUrl).attr('href', data.url.shortUrl).text(data.url.shortUrl))).
-                        append($('<td />').attr('id', 'timestamp-' + data.url.linkId).text(data.url.date)).append($('<td />').text(data.url.ip)).
-                        append($('<td />').text(data.url.clickCount)).
-                        append($('<td />').addClass('actions').
-                               append($('<input />').attr('id', 'edit-button-' + data.url.linkId).
-                                      addClass('button').
-                                      attr('type', 'button').val('Edit').click(function () {
-                                          edit(data.url.linkId);
-                                      })).
-                               append('\n').
-                               append($('<input />').attr('id', 'delete-button-' + data.url.linkId).
-                                      addClass('button').
-                                      attr('type', 'button').val('Del').click(function () {
-                                          remove(data.url.linkId);
-                                      })));
-                    row.hide().prependTo($('#tbl-url tbody')).fadeIn(200).trigger('update');
+                    $('<tr />', {
+                        id: 'id-' + data.url.linkId
+                    }).append($('<td />', {
+                        text: data.url.linkId
+                    })).append($('<td />', {
+                        id: 'url-' + data.url.linkId
+                    }).append($('<a />', {
+                        title: data.url.originUrl,
+                        href: data.url.originUrl,
+                        text: data.url.originUrl
+                    }))).append($('<td />').append($('<a />', {
+                        title: data.url.shortUrl,
+                        href: data.url.shortUrl,
+                        text: data.url.shortUrl
+                    }))).append($('<td />', {
+                        id: 'timestamp-' + data.url.linkId,
+                        text: data.url.date
+                    })).append($('<td />', {
+                        text: data.url.ip
+                    })).append($('<td />', {
+                        text: data.url.clickCount
+                    })).append($('<td />', {
+                        'class': 'actions'
+                    }).append($('<input />', {
+                        id: 'edit-button-' + data.url.linkId,
+                        'class': 'button',
+                        type: 'button',
+                        value: 'Edit',
+                        click: function () {
+                            edit(data.url.linkId);
+                        }
+                    })).append('\n').append($('<input />', {
+                        id: 'delete-button-' + data.url.linkId,
+                        'class': 'button',
+                        type: 'button',
+                        value: 'Del',
+                        click: function () {
+                            remove(data.url.linkId);
+                        }
+                    }))).hide().prependTo($('#tbl-url tbody')).fadeIn(200).trigger('update');
+
                     $('.nourl_found').remove();
                     zebra_table();
                     reset_url();
@@ -62,28 +83,39 @@ function add() {
 }
 
 function edit(id) {
-    var editRow = $('<tr />').attr('id', 'edit-' + id).addClass('edit-row').
-        append($('<td />').attr('colspan', '6').append('Edit: \n').
-               append('<strong>original URL</strong>').append(':\n').
-               append($('<input />').attr('id', 'edit-url-' + id).attr('type', 'text').
-                      val($('#url-' + id + ' a').attr('href')).
-                      attr('size', '100').addClass('text'))).
-        append($('<td />').attr('colspan', '1').
-               append($('<input />').attr('type', 'button').
-                      attr('id', 'edit-submit-' + id).
-                      val('Save').
-                      attr('title', 'Save new value').
-                      addClass('button').click(function () {
-                          save_edit(id);
-                      })).
-               append('\n').
-               append($('<input />').attr('type', 'button').
-                      attr('id', 'edit-close-' + id).
-                      val('X').
-                      attr('title', 'Cancel editing').
-                      addClass('button').click(function () {
-                          cancel_edit(id);
-                      })));
+    var editRow = $('<tr />', {
+        id: 'edit-' + id,
+        'class': 'edit-row'
+    }).append($('<td />', {
+        colspan: '6'
+    }).append('Edit: \n').append('<strong>original URL</strong>').append(':\n').
+              append($('<input />', {
+                  id: 'edit-url-' + id,
+                  type: 'text',
+                  value: $('#url-' + id + ' a').attr('href'),
+                  size: '100',
+                  'class': 'text'
+              }))).append($('<td />', {
+                  colspan: '1'
+              }).append($('<input />', {
+                  id: 'edit-submit-' + id,
+                  type: 'button',
+                  value: 'Save',
+                  title: 'Save new value',
+                  'class': 'button',
+                  click: function () {
+                      save_edit(id);
+                  }
+              })).append('\n').append($('<input />', {
+                  id: 'edit-close-' + id,
+                  type: 'button',
+                  value: 'X',
+                  title: 'Cancel editing',
+                  'class': 'button',
+                  click: function () {
+                      cancel_edit(id);
+                  }
+              })));
     $('#id-' + id).after(editRow);
     $('#edit-url-'+ id).focus();
     add_disable('#edit-button-' + id);
