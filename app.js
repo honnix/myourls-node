@@ -1,10 +1,15 @@
+/**
+ * Configuration
+ */
+
+var host = 'http://localhost:3000/';
 
 /**
  * Module dependencies.
  */
 
 var express = require('express');
-var s = require('./shortened_url');
+var s = require('./shortened_url').create(host);
 var _ = require('underscore');
 
 var app = module.exports = express.createServer();
@@ -37,7 +42,7 @@ app.set('view options', {
 // Routes
 
 app.get(/^\/(index)?$/, function (req, res) {
-    s.findAll({}, {}, function (docs) {
+    s.findAll({}, {}, function (urls) {
         res.render('index', {
             from: 0,
             to: 10,
@@ -45,18 +50,18 @@ app.get(/^\/(index)?$/, function (req, res) {
             links: 100,
             clicks: 1000,
             totalPages: 10,
-            urls: docs
+            urls: urls
         });
     });
 });
 
 app.get('/:id', function (req, res, next) {
     var id = req.params.id;
-    s.find({linkId: id}, function (doc) {
+    s.find({linkId: id}, function (url) {
         var to;
 
-        if (doc != null) {
-            to = doc.originUrl;
+        if (url != null) {
+            to = url.originUrl;
         } else {
             to = '/index';
         }
@@ -66,8 +71,26 @@ app.get('/:id', function (req, res, next) {
 });
 
 app.get('/api/add', function (req, res) {
-    var originUrl = req.param.url;
-    res.send({status: 'success', html: 'ok'});
+    var url = {
+        originUrl: req.query.url,
+        date: new Date(),
+        ip: req.header('Host'),
+        clickCount: 0
+    };
+    s.insert(url, function (url) {
+        res.send({
+            status: 'success', 
+            message: 'URL added successfully',
+            url: {
+                linkId: url.linkId,
+                originUrl: url.originUrl,
+                shortUrl: url.shortUrl,
+                date: url.date.toString(),
+                ip: url.ip,
+                clickCount: url.clickCount
+            }
+        });
+    });
 });
 
 // Only listen on $ node app.js

@@ -23,7 +23,16 @@ function add() {
         {url: newUrl},
         function (data) {
             if(data.status == 'success') {
-                $('#tbl-url tbody').prepend(data.html).trigger('update');
+                var row = $('<tr />').attr('id', data.url.linkId).append($('<td />').text(data.url.linkId)).
+                    append($('<td />').text(data.url.originUrl)).append($('<td />').text(data.url.shortUrl)).
+                    append($('<td />').text(data.url.date)).append($('<td />').text(data.url.ip)).
+                    append($('<td />').text(data.url.clickCount)).append($('<td />').addClass('actions').
+                                                                         append($('<input />').addClass('button').
+                                                                                attr('type', 'button').attr('value', 'Edit')).
+                                                                         append('\n').
+                                                                         append($('<input />').addClass('button').
+                                                                                attr('type', 'button').attr('value', 'Del')));
+                $('#tbl-url tbody').prepend(row).trigger('update');
                 $('.nourl_found').remove();
                 zebra_table();
                 reset_url();
@@ -133,9 +142,9 @@ function end_disable(el) {
 
 // Prettify table with odd & even rows
 function zebra_table() {
-    $('#tblUrl tbody tr:even').removeClass('odd').addClass('even');
-    $('#tblUrl tbody tr:odd').removeClass('even').addClass('odd');
-    $('#tblUrl tbody').trigger('update');
+    $('#tbl-url tbody tr:even').removeClass('odd').addClass('even');
+    $('#tbl-url tbody tr:odd').removeClass('even').addClass('odd');
+    $('#tbl-url tbody').trigger('update');
 }
 
 // Update feedback message
@@ -145,7 +154,7 @@ function feedback(msg, type) {
     $('#feedback').html(span + msg + '</span>').fadeIn(200,function(){
         $(this).animate({'opacity':1}, delay, function() {
             $(this).fadeOut(800);
-        })
+        });
     });
 }
 

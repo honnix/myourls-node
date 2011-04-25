@@ -46,6 +46,7 @@ html
           | :
           input#add-url.text(type='text', value='http://', size='90')
           input#add-button.button(type='submit', value='Shorten The URL')
+        #feedback
 
     table#tbl-url.tblSorter(cellpadding='0', cellspacing='1')
       thead: tr
@@ -106,7 +107,7 @@ html
       tbody
         - if (urls)
           - each url in urls
-            tr
+            tr(id=url.linkId)
               td=url.linkId
               td=url.originUrl
               td=url.shortUrl
