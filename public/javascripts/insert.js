@@ -31,7 +31,7 @@ function add() {
                     var row = $('<tr />').attr('id', 'id-' + data.url.linkId).append($('<td />').text(data.url.linkId)).
                         append($('<td />').attr('id', 'url-' + data.url.linkId).append(
                             $('<a />').attr('title', data.url.originUrl).attr('href', data.url.originUrl).text(data.url.originUrl))).
-                        append($('<td />').attr('id', 'shorturl-' + data.url.linkId).append(
+                        append($('<td />').append(
                             $('<a />').attr('title', data.url.shortUrl).attr('href', data.url.shortUrl).text(data.url.shortUrl))).
                         append($('<td />').attr('id', 'timestamp-' + data.url.linkId).text(data.url.date)).append($('<td />').text(data.url.ip)).
                         append($('<td />').text(data.url.clickCount)).
