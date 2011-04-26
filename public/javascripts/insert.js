@@ -67,7 +67,7 @@ function add() {
                         click: function () {
                             remove(data.url.linkId);
                         }
-                    }))).hide().prependTo($('#tbl-url tbody')).fadeIn(200).trigger('update');
+                    }))).css('display', 'none').prependTo($('#tbl-url tbody')).fadeIn(200).trigger('update');
 
                     $('.nourl_found').remove();
                     zebra_table();
@@ -195,10 +195,10 @@ function zebra_table() {
 }
 
 function feedback(msg, type) {
-    var span = (type == 'fail') ? '<span class="fail">' : '<span>' ;
-    var delay = (type == 'fail') ? 2500 : 1000 ;
-    $('#feedback').html(span + msg + '</span>').fadeIn(200,function(){
-        $(this).animate({'opacity':1}, delay, function() {
+    var span = (type === 'fail') ? '<span class="fail">' : '<span>';
+    var delay = (type === 'fail') ? 2500 : 1000 ;
+    $('#feedback').html(span + msg + '</span>').fadeIn(200, function() {
+        $(this).animate({opacity: 1}, delay, function () {
             $(this).fadeOut(800);
         });
     });
@@ -210,7 +210,7 @@ function reset_url() {
 }
 
 function increment() {
-    $('.increment').each(function(){
+    $('.increment').each(function () {
         $(this).html( parseInt($(this).html()) + 1);
     });
 }

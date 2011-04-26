@@ -73,7 +73,7 @@ app.get('/:id', function (req, res, next) {
 app.get('/api/add', function (req, res) {
     var url = {
         originUrl: req.query.url,
-        ip: req.header('Host')
+        ip: req.connection.remoteAddress
     };
     s.insert(url, function (url) {
         res.send({
