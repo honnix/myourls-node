@@ -15,6 +15,27 @@ $(document).ready(function () {
     $('input[id^="delete-button-"]').click(function () {
         remove($(this).attr('id').substring('delete-button-'.length));
     });
+    $('#submit-clear-filter').click(function () {
+        window.parent.location.href = '/';
+    });
+
+    var urlParams = {};
+    (function () {
+        var e,
+        a = /\+/g,  // Regex for replacing addition symbol with a space
+        r = /([^&=]+)=?([^&]*)/g,
+        d = function (s) { return decodeURIComponent(s.replace(a, " ")); },
+        q = window.location.search.substring(1);
+
+        while (e = r.exec(q)) {
+            urlParams[d(e[1])] = d(e[2]);
+        }
+    })();
+
+    $('#' + 'search-in-' + urlParams['search-in']).attr('selected', 'selected');
+    $('#' + 'sort-by-' + urlParams['sort-by']).attr('selected', 'selected');
+    $('#' + 'sort-order-' + urlParams['sort-order']).attr('selected', 'selected');
+    $('#' + 'click-filter-' + urlParams['click-filter']).attr('selected', 'selected');
 });
 
 function add() {
@@ -211,6 +232,12 @@ function reset_url() {
 
 function increment() {
     $('.increment').each(function () {
-        $(this).html( parseInt($(this).html()) + 1);
+        $(this).html(parseInt($(this).html()) + 1);
+    });
+    $('#from').each(function () {
+        var from = $(this).html();
+        if (from === '0') {
+            $(this).html(1);
+        }
     });
 }

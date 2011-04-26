@@ -22,7 +22,6 @@ app.configure(function () {
     app.use(express.bodyParser());
     app.use(express.methodOverride());
     app.use(express.cookieParser());
-    app.use(express.session({ secret: 'your secret here' }));
     app.use(app.router);
     app.use(express.static(__dirname + '/public'));
 });
@@ -42,14 +41,58 @@ app.set('view options', {
 // Routes
 
 app.get(/^\/(index)?$/, function (req, res) {
-    s.findAll({}, {}, function (urls) {
+    var page = req.query.page || 1;
+    var perpage = req.query.perpage || 10;
+    var offset = (page - 1) * perpage;
+    var search = req.query.search || '';
+    var searchIn = req.query['search-in'] || 'originUrl';
+    var sortBy = req.query['sort-by'] || 'linkId';
+    var sortOrder = req.query['sort-order'] || 'desc';
+    var clickFilter = req.query['click-filter'] || 'gte';
+    var clickLimit = req.query['click-limit'] || '';
+
+    var options = {skip: offset, limit: perpage, sort: [[sortBy, sortOrder]]};
+    var selector = {};
+    var clickSelector = {};
+
+    if (clickLimit !== '') {
+        clickSelector['$' + clickFilter] = parseInt(clickLimit);
+        selector.clickCount = clickSelector;
+    }
+
+    if (search !== '') {
+        selector['$where'] = 'this.' + searchIn + '.indexOf("' + search + '") !== -1';
+    }
+
+    s.findAll(selector, options, function (urls, count) {
+        var totalItems = _(urls).foldl(function (x, y) {
+            return x + y.clickCount;
+        }, 0);
+
+        var from = 0;
+        var to = 0;
+
+        if (offset + 1 > totalItems) from = totalItems; else from = offset + 1;
+        if (offset + perpage > totalItems) to = totalItems; else to = offset + perpage;
+
         res.render('index', {
-            from: 0,
-            to: 10,
-            total: 100,
-            links: 100,
-            clicks: 1000,
-            totalPages: 10,
+            search: search,
+            searchIn: searchIn,
+            sortBy: sortBy,
+            sortOrder: sortOrder,
+            perpage: perpage,
+            clickFilter: clickFilter,
+            clickLimit: clickLimit,
+            from: from,
+            to: to,
+            total: urls.length,
+            links: count,
+            clicks: totalItems,
+            totalPages: Math.ceil(count / perpage),
+            page: page,
+            nav: '/?search=' + search + '&sort-by=' + sortBy + '&sort-order=' + sortOrder +
+              '&search-in=' + searchIn + '&click-filter=' + clickFilter + '&click-limit=' + clickLimit +
+              '&perpage=' + perpage + '&page=',
             urls: urls
         });
     });
@@ -63,7 +106,7 @@ app.get('/:id', function (req, res, next) {
         if (url != null) {
             to = url.originUrl;
         } else {
-            to = '/index';
+            to = 'home';
         }
 
         res.redirect(to);

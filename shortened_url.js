@@ -24,14 +24,24 @@ ShortenedUrl.prototype.find = function (selector, callback) {
 ShortenedUrl.prototype.findAll = function (selector, options, callback) {
     this.db.open(function (err, db) {
         db.collection('shortenedurls', function (err, collection) {
-            collection.find(selector, options, function (err, cursor) {
-                cursor.toArray(function (err, docs) {
+            collection.count({}, function (err, count) {
+                if (count !== 0) {
+                    collection.find(selector, options, function (err, cursor) {
+                        cursor.toArray(function (err, docs) {
+                            try {
+                                callback(docs, count);
+                            } finally {
+                                db.close();
+                            }
+                        });
+                    });
+                } else {
                     try {
-                        callback(docs);
+                        callback([], 0);
                     } finally {
                         db.close();
                     }
-                });
+                }                
             });
         });
     });
