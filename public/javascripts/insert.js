@@ -95,7 +95,7 @@ function add() {
                     reset_url();
                     increment();
                 }
-                feedback(data.message, data.status);
+                feedback(data.status, data.message);
                 end_loading('#add-button');
                 end_disable('#add-button');
             }
@@ -184,7 +184,7 @@ function save_edit(id) {
                     $(this).remove();
                 });
             }
-            feedback(data.message, data.status);
+            feedback(data.status, data.message);
             end_disable('#edit-close-' + id);
             end_loading('#edit-close-' + id);
             end_disable('#edit-button-' + id);
@@ -215,7 +215,7 @@ function zebra_table() {
     $('#tbl-url tbody').trigger('update');
 }
 
-function feedback(msg, type) {
+function feedback(type, msg) {
     var span = (type === 'fail') ? '<span class="fail">' : '<span>';
     var delay = (type === 'fail') ? 2500 : 1000 ;
     $('#feedback').html(span + msg + '</span>').fadeIn(200, function() {

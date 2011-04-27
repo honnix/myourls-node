@@ -119,18 +119,25 @@ app.get('/api/add', function (req, res) {
         ip: req.connection.remoteAddress
     };
     s.insert(url, function (url) {
-        res.send({
-            status: 'success', 
-            message: 'URL added successfully',
-            url: {
-                linkId: url.linkId,
-                originUrl: url.originUrl,
-                shortUrl: url.shortUrl,
-                date: url.date.toString(),
-                ip: url.ip,
-                clickCount: url.clickCount
-            }
-        });
+        if (url != null) {
+            res.send({
+                status: 'success', 
+                message: 'URL added successfully',
+                url: {
+                    linkId: url.linkId,
+                    originUrl: url.originUrl,
+                    shortUrl: url.shortUrl,
+                    date: url.date.toString(),
+                    ip: url.ip,
+                    clickCount: url.clickCount
+                }
+            });
+        } else {
+            res.send({
+                status: 'fail',
+                message: 'URL already exists'
+            });
+        }
     });
 });
 

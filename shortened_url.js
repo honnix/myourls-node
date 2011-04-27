@@ -31,6 +31,7 @@ ShortenedUrl.prototype.findAll = function (selector, options, callback) {
                             try {
                                 callback(docs, count);
                             } finally {
+                                cursor.close();
                                 db.close();
                             }
                         });
@@ -50,26 +51,41 @@ ShortenedUrl.prototype.findAll = function (selector, options, callback) {
 ShortenedUrl.prototype.insert = function (url, callback) {
     var that = this;
     this.db.open(function (err, db) {
-        db.collection('nextids', function (err, collection) {
-            collection.findAndModify({_id: 'seq'}, [], {$inc: {next: 1}}, {upsert: true, new: true}, function (err, doc) {
-                var linkId = doc.next.toString(16);
-                var toBeInserted = {
-                    linkId: linkId,
-                    originUrl: url.originUrl,
-                    shortUrl: that.host + linkId,
-                    date: new Date,
-                    ip: url.ip,
-                    clickCount: 0
-                };
+        db.collection('shortenedurls', function (err, collection) {
+            collection.find({originUrl: url.originUrl}, function (err, cursor) {
+                cursor.nextObject(function (err, doc) {
+                    if (doc == null) {
+                        db.collection('nextids', function (err, collection) {
+                            collection.findAndModify({_id: 'seq'}, [], {$inc: {next: 1}}, {upsert: true, new: true}, function (err, doc) {
+                                var linkId = doc.next.toString(16);
+                                var toBeInserted = {
+                                    linkId: linkId,
+                                    originUrl: url.originUrl,
+                                    shortUrl: that.host + linkId,
+                                    date: new Date,
+                                    ip: url.ip,
+                                    clickCount: 0
+                                };
 
-                db.collection('shortenedurls', function (err, collection) {
-                    collection.insert(toBeInserted, {safe: true}, function (error, docs) {
+                                db.collection('shortenedurls', function (err, collection) {
+                                    collection.insert(toBeInserted, {safe: true}, function (error, docs) {
+                                        try {
+                                            callback(docs[0]);
+                                        } finally {
+                                            db.close();
+                                        }
+                                    });
+                                });
+                            });
+                        });
+                    } else {
                         try {
-                            callback(docs[0]);
+                            callback(null);
                         } finally {
                             db.close();
-                        }
-                    });
+                        }                        
+                    }
+                    cursor.close();
                 });
             });
         });

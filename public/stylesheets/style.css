@@ -1,145 +1,140 @@
 body {
-  font-family: Verdana, Arial;
-  font-size: 12px;
-  color: #595441;
+    font-family: Verdana, Arial;
+    font-size: 12px;
+    color: #595441;
 }
 
 div, p, td {
-  font-family: Verdana, Arial;
-  font-size: 12px;
+    font-family: Verdana, Arial;
+    font-size: 12px;
 }
 
 a, a:link, a:active, a:visited {
-  color: #4a8797;
-  text-decoration: none;
+    color: #4a8797;
+    text-decoration: none;
 }
 
 a:hover {
-  text-decoration: underline;
+    text-decoration: underline;
 }
 
 h1 {
-  height: 50px;
+    height: 50px;
 }
 
 h1 a {
-  float: right;
-  text-align: right;
+    float: right;
+    text-align: right;
 }
 
 h1 a:hover {
-  text-decoration: none;
+    text-decoration: none;
 }
 
 h1 a:hover span {
-  text-decoration: underline;
-  color: #8dbdd8
+    text-decoration: underline;
+    color: #8dbdd8
 }
 
 input, textarea {
-  -moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
 }
 
 input.text, select, textarea {
-  font-family: Verdana, Arial;
-  font-size: 10px;
-  color: #595441;
-  background-color: #FFFFFF;
-  border: 1px solid #8dbdd8;
-  margin: 1px;
+    font-family: Verdana, Arial;
+    font-size: 10px;
+    color: #595441;
+    background-color: #FFFFFF;
+    border: 1px solid #8dbdd8;
+    margin: 1px;
 }
 
 input.button {
-  font-family: Verdana, Arial;
-  font-size: 10px;
-  color: #595441;
-  font-weight: bold;
-  background-color: #FFFFFF;
-  border: 1px solid #8dbdd8;
-  cursor: pointer;
+    font-family: Verdana, Arial;
+    font-size: 10px;
+    color: #595441;
+    font-weight: bold;
+    background-color: #FFFFFF;
+    border: 1px solid #8dbdd8;
+    cursor: pointer;
 }
 
 input.primary {
-  border: 2px solid #aaccaa;
-  background: #fafafe;
+    border: 2px solid #aaccaa;
+    background: #fafafe;
 }
 
 input.disabled {
-  border: 1px solid #333;
-  background: #ccc;
+    border: 1px solid #333;
+    background: #ccc;
 }
 
 input.loading {
-  background: #cc7 url(../images/loading.gif) center center no-repeat;
-  color: #cc7;
+    background: #cc7 url(../images/loading.gif) center center no-repeat;
+    color: #cc7;
 }
 
 input:focus, textarea:focus {
-  border: 2px solid #AACCAA;
-  margin: 0px;
+    border: 2px solid #AACCAA;
+    margin: 0px;
 }
 
 tr.edit-row  td {
-  background: #fdf !important;
+    background: #fdf !important;
 }
 
 #new-url {
-  text-align: center;
-  padding: 1px;
-  border: 1px solid #CDCDCD;
-  background: #fff;
-  clear: both;
+    text-align: center;
+    padding: 1px;
+    border: 1px solid #CDCDCD;
+    background: #fff;
+    clear: both;
 }
 
 #new-url div {
-  background: #E6EEEE;
-  padding: 4px;
+    background: #E6EEEE;
+    padding: 4px;
 }
 
 #new-url-form {
-  padding: 4px;
+    padding: 4px;
 }
 
-#new-url #lift__noticesContainer___notice, #new-url #lift__noticesContainer___warning {
-  background: #ff8;
-  color: #8DBDD8;
-  width: 50%;
-  margin: 0px 25%;
-  padding: 2px;
-  border: 1px solid #ff8;
+#new-url #feedback {
+    background: #ff8;
+    color: #8DBDD8;
+    width: 50%;
+    margin: 0px 25%;
+    padding: 2px;
+    border: 1px solid #ff8;
 }
 
-#new-url #lift__noticesContainer___notice ul, #new-url #lift__noticesContainer___warning ul {
-  margin: 0px;
-  list-style-type: none;
-}
-
-#new-url #lift__noticesContainer___warning li {
-  color: #f55;
+#new-url #feedback .fail {
+    color:#f55;
 }
 
 td.actions input {
-  visibility: hidden;
+    visibility: hidden;
 }
 
 td.actions input.disabled, td.actions input.loading {
-  visibility: visible;
+    visibility: visible;
 }
 
 tr:hover td.actions input {
-  visibility: visible;
+    visibility: visible;
 }
 
 .error {
-  color: red;
+    color: red;
 }
 
 .success {
-  color: green;
+    color: green;
 }
 
 #footer {
-  margin-top: 2em;
-  text-align: center;
+    margin-top: 2em;
+    text-align: center;
 }
