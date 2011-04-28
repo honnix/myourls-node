@@ -1,5 +1,6 @@
 $(document).ready(function () {
     reset_url();
+
     if ($('#tbl-url tr.nourl_found').length != 1) {
         $('#tbl-url').tablesorter({
             headers: { 6: {sorter: false} }, // no sorter on column #6
@@ -12,14 +13,26 @@ $(document).ready(function () {
     $('input[id^="edit-button-"]').click(function () {
         edit($(this).attr('id').substring('edit-button-'.length));
     });
+
     $('input[id^="delete-button-"]').click(function () {
         remove($(this).attr('id').substring('delete-button-'.length));
     });
+
     $('#submit-clear-filter').click(function () {
         window.parent.location.href = '/';
     });
 
-    var urlParams = {};
+    select();
+});
+
+function select() {
+    var urlParams = {
+        'search-in': 'originUrl',
+        'sort-by': 'linkId',
+        'sort-order': 'desc',
+        'click-filter': 'gte'
+    };
+
     (function () {
         var e,
         a = /\+/g,  // Regex for replacing addition symbol with a space
@@ -36,7 +49,7 @@ $(document).ready(function () {
     $('#' + 'sort-by-' + urlParams['sort-by']).attr('selected', 'selected');
     $('#' + 'sort-order-' + urlParams['sort-order']).attr('selected', 'selected');
     $('#' + 'click-filter-' + urlParams['click-filter']).attr('selected', 'selected');
-});
+}
 
 function add() {
     var url = $('#add-url').val();
