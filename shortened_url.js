@@ -3,7 +3,7 @@ var Server = require('mongodb').Server;
 
 var ShortenedUrl = function (host) {
     this.host = host;
-    this.db = new Db('myourls', new Server('localhost', 27017, {auto_reconnect: true, poolSize: 4}),
+    this.db = new Db('myourls', new Server('localhost', 27017, {auto_reconnect: true, poolSize: 10}),
                      {native_parser: true});
     this.db.open(function (err, db) {});
 };

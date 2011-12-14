@@ -177,7 +177,19 @@ app.get('/api/remove', function (req, res) {
 // Only listen on $ node app.js
 
 if (!module.parent) {
-    cluster = require('cluster');
-    cluster(app).listen(3000);
-    console.log("Express server listening on port %d", 3000);
+    var cluster = require('cluster');
+    if (cluster.isMaster) {
+        // Fork workers.
+        var numCPUs = require('os').cpus().length;
+        for (var i = 0; i < numCPUs; i++) {
+            cluster.fork();
+        }
+
+        cluster.on('death', function(worker) {
+            console.log('worker ' + worker.pid + ' died');
+        });
+    } else {
+        // Worker processes have a http server.
+        app.listen(3000);
+    }
 }
