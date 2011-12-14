@@ -6,4 +6,3 @@ to install all dependencies:
 * npm install jade
 * npm install mongodb
 * npm install underscore
-* npm install cluster
